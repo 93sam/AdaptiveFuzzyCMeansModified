@@ -7,8 +7,8 @@ class FCM():
 		self.m = 2
 
 		read = Reader('irisdata2.txt')
-		X,y = read.get_data()
-		self.data_shape = X.shape
+		self.X,self.y = read.get_data()
+		self.data_shape = self.X.shape
 		rows , cols = self.data_shape
 		
 		self.U = []
@@ -25,5 +25,13 @@ class FCM():
 			self.C.append(l)
 		self.C = np.array(self.C).astype(np.float)
 
+
+	def Update_C(self):
+		self.C = np.dot(np.transpose(self.U),self.X)
+		self.C = np.divide()
+		print  self.C
+
+
 a = FCM(4)
+a.Update_C()
 
