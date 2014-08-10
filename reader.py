@@ -15,5 +15,6 @@ class Reader:
 		self.data = np.array(self.data)
 		self.X = self.data[0::,0:4].astype(np.float)
 		self.Y = self.data[0::,4].astype(np.float)
-		print self.X
-		print self.Y
+	
+	def get_data(self):
+		return (self.X,self.Y)
