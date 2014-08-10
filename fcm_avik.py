@@ -1,6 +1,8 @@
 import numpy as np
 import math
 from reader import Reader
+np.seterr(divide='ignore', invalid='ignore')
+
 
 class FCM():
 	def __init__(self,n_clusters,epsilon=0.05,max_iter=-1):
@@ -35,9 +37,25 @@ class FCM():
 		return J
 
 	def Update_C(self):
-		self.C = np.dot(np.transpose(self.U),self.X)
-		self.C = np.divide()
+		for j in range(self.n_clusters):
+			num_sum = 0
+			den_sum = 0
+			for i in range(self.data_shape[0]):
+				num_sum += np.dot((self.U[i][j] ** self.m),self.X[i])
+				den_sum += self.U[i][j] ** self.m
+		
+				self.C[j] = np.divide(num_sum,den_sum)
+		
 		print  self.C
-	
+
+
+	def update_U(self):
+		for i in range(self.X.shape[0]):
+			for j in range(self.n_clusters):
+				sumation = 0
+				for k in range(self.n_clusters):
+					sumation += ( np.sum(np.subtract(self.X[i],self.C[j])) / np.sum(np.subtract(self.X[i],self.C[k])) ) ** (2 / (self.m-1) )
+				self.U[i][j] = 1 / sumation
 
 a = FCM(4)
+#a.Update_C()
