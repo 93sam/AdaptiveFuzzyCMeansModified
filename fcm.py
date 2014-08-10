@@ -1,5 +1,4 @@
 import numpy as np
-import math
 from reader import Reader
 
 class FCM():
@@ -33,6 +32,14 @@ class FCM():
 			for j in range(self.n_clusters):
 				J += (self.U[i][j] ** self.m) * (np.sum(np.subtract(self.X[i],self.C[j])))
 		return J
+
+	def update_U():
+		for i in range(self.X.shape[0]):
+			for j in range(self.n_clusters):
+				sumation = 0
+				for k in range(self.n_clusters):
+					sumation += ( np.sum(np.subtract(self.X[i],self.C[j])) / np.sum(np.subtract(self.X[i],self.C[k])) ) ** (2 / (self.m-1) )
+				self.U[i][j] = 1 / sumation
 
 
 a = FCM(4)
