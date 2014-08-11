@@ -78,12 +78,29 @@ class FCM():
 				print d
 				i += 1
 
+	def calculate_score(self):
+		print self.y
+		print self.result
+		correct = float(0)
+		incorrect = 0
+		for i in range(self.y.shape[0]):
+			if(self.result[i] == self.y[i]):
+				correct += 1
+			else:
+				incorrect += 1
+		accuracy = (correct/float(self.y.shape[0])) * 100
+		print accuracy
+		
+
 	def show_result(self):
 		print self.U
-		print np.argmax(self.U, axis = 1)
+		self.result = np.zeros(shape=(self.data_shape[0],1))
+		self.result = np.argmax(self.U, axis = 1)
+		print self.result.shape
+		self.calculate_score()
 
 def main():
-	cluster = FCM('irisdata2.txt',3,0.00000000001,100)
+	cluster = FCM('irisdata2.txt',3,0.00000000000001,300)
 	cluster.form_clusters()
 	cluster.show_result()
 
