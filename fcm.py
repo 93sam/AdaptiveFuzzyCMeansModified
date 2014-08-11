@@ -2,11 +2,13 @@ import numpy as np
 from reader import Reader
 
 class FCM():
-	def __init__(self,n_clusters,epsilon=0.05,max_iter=-1):
+	def __init__(self,filename,n_clusters,epsilon=0.05,max_iter=-1):
 		self.m = 2
 		self.n_clusters = n_clusters
+		self.max_iter = max_iter
+		self.epsilon = epsilon
 
-		read = Reader('irisdata2.txt')
+		read = Reader(filename)
 		self.X,self.y = read.get_data()
 		self.data_shape = self.X.shape
 		rows , cols = self.data_shape
@@ -30,16 +32,60 @@ class FCM():
 		J = 0
 		for i in range(self.data_shape[0]):
 			for j in range(self.n_clusters):
-				J += (self.U[i][j] ** self.m) * (np.sum(np.subtract(self.X[i],self.C[j])))
+				J += (self.U[i][j] ** self.m) * (self.eucledian_dist(self.X[i],self.C[j]) ** 2)
 		return J
 
-	def update_U():
+	def update_U(self):
 		for i in range(self.X.shape[0]):
 			for j in range(self.n_clusters):
 				sumation = 0
 				for k in range(self.n_clusters):
-					sumation += ( np.sum(np.subtract(self.X[i],self.C[j])) / np.sum(np.subtract(self.X[i],self.C[k])) ) ** (2 / (self.m-1) )
+					sumation += ( self.eucledian_dist(self.X[i],self.C[j]) / self.eucledian_dist(self.X[i],self.C[k]) ) ** (2 / (self.m-1) )
 				self.U[i][j] = 1 / sumation
 
+	def update_C(self):
+		for j in range(self.n_clusters):
+			num_sum = 0
+			den_sum = 0
+			for i in range(self.data_shape[0]):
+				num_sum += np.dot((self.U[i][j] ** self.m),self.X[i])
+				den_sum += self.U[i][j] ** self.m
+			self.C[j] = np.divide(num_sum,den_sum)
 
-a = FCM(4)
+	def eucledian_dist(self,a,b):
+		return np.linalg.norm(a-b)
+
+	def form_clusters(self):
+		d = 100
+		if self.max_iter != -1:
+			for i in range(self.max_iter):
+				print "loop : " , int(i)
+				self.update_C()
+				temp = np.copy(self.U)
+				self.update_U()
+				d = sum(abs(sum(self.U - temp)))
+				print d
+				if d < self.epsilon:
+					break
+		else:
+			i = 0
+			while d > self.epsilon:
+				self.update_C()
+				temp = np.copy(self.U)
+				self.update_U()
+				d = sum(abs(sum(self.U - temp)))
+				print "loop : " , int(i)
+				print d
+				i += 1
+
+	def show_result(self):
+		print self.U
+		print np.argmax(self.U, axis = 1)
+
+def main():
+	cluster = FCM('irisdata2.txt',3,0.00000000001,100)
+	cluster.form_clusters()
+	cluster.show_result()
+
+if __name__ == '__main__':
+	main()
